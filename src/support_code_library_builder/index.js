@@ -1,10 +1,11 @@
 import _ from 'lodash'
+import util from 'util'
 import TransformLookupBuilder from './parameter_type_registry_builder'
 import {
   defineTestRunHook,
   defineParameterType,
   defineTestCaseHook,
-  defineStep
+  defineStep,
 } from './define_helpers'
 import { wrapDefinitions } from './finalize_helpers'
 
@@ -16,10 +17,10 @@ export class SupportCodeLibraryBuilder {
       AfterAll: defineTestRunHook(this, 'afterTestRunHookDefinitions'),
       Before: defineTestCaseHook(this, 'beforeTestCaseHookDefinitions'),
       BeforeAll: defineTestRunHook(this, 'beforeTestRunHookDefinitions'),
-      defineSupportCode: fn => {
-        fn(this.methods)
-      },
       defineStep: defineStep(this),
+      defineSupportCode: util.deprecate(fn => {
+        fn(this.methods)
+      }, 'cucumber: defineSupportCode is deprecated. Please require/import the individual methods instead.'),
       setDefaultTimeout: milliseconds => {
         this.options.defaultTimeout = milliseconds
       },
@@ -28,7 +29,7 @@ export class SupportCodeLibraryBuilder {
       },
       setWorldConstructor: fn => {
         this.options.World = fn
-      }
+      },
     }
     this.methods.Given = this.methods.When = this.methods.Then = this.methods.defineStep
   }
@@ -42,11 +43,11 @@ export class SupportCodeLibraryBuilder {
         'afterTestRunHook',
         'beforeTestCaseHook',
         'beforeTestRunHook',
-        'step'
+        'step',
       ])
-        .map(key => this.options[key + 'Definitions'])
+        .map(key => this.options[`${key}Definitions`])
         .flatten()
-        .value()
+        .value(),
     })
     this.options.afterTestCaseHookDefinitions.reverse()
     this.options.afterTestRunHookDefinitions.reverse()
@@ -67,7 +68,7 @@ export class SupportCodeLibraryBuilder {
       World({ attach, parameters }) {
         this.attach = attach
         this.parameters = parameters
-      }
+      },
     })
   }
 }

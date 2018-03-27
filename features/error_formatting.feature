@@ -8,33 +8,29 @@ Feature: Error formatting
       """
     And a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a passing step$/, function() {})
-      })
+      Given(/^a passing step$/, function() {})
       """
     And a file named "features/support/hooks.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Before} from 'cucumber'
 
-      defineSupportCode(({Before}) => {
-        Before(function(_, callback) { callback('Fail') })
-      })
+      Before(function(_, callback) { callback('Fail') })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it fails
     And the output contains the text:
       """
       Failures:
 
       1) Scenario: some scenario # features/a.feature:2
-         ✖ Before # features/support/hooks.js:4
+         ✖ Before # features/support/hooks.js:3
              Error: Fail
       """
     And the output contains the text:
       """
-         - Given a passing step # features/step_definitions/cucumber_steps.js:4
+         - Given a passing step # features/step_definitions/cucumber_steps.js:3
 
       1 scenario (1 failed)
       1 step (1 skipped)
@@ -56,26 +52,26 @@ Feature: Error formatting
       """
     And a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a basic step$/, function() {})
-        Given(/^a step with a doc string$/, function(str) {})
-        Given(/^a pending step$/, function() { return 'pending' })
-      })
+      Given(/^a basic step$/, function() { this.attach('Some info.') })
+      Given(/^a step with a doc string$/, function(str) { this.attach('{"name": "some JSON"}', 'application/json') })
+      Given(/^a pending step$/, function() { return 'pending' })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then the output contains the text:
       """
       Warnings:
 
       1) Scenario: some scenario # features/a.feature:3
-         ✔ Given a basic step # features/step_definitions/cucumber_steps.js:4
-         ✔ And a step with a doc string # features/step_definitions/cucumber_steps.js:5
+         ✔ Given a basic step # features/step_definitions/cucumber_steps.js:3
+             Attachment (text/plain): Some info.
+         ✔ And a step with a doc string # features/step_definitions/cucumber_steps.js:4
              \"\"\"
              my doc string
              \"\"\"
-         ? And a pending step # features/step_definitions/cucumber_steps.js:6
+             Attachment (application/json)
+         ? And a pending step # features/step_definitions/cucumber_steps.js:5
              Pending
       """
     And it fails
@@ -93,23 +89,21 @@ Feature: Error formatting
       """
     And a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a table:$/, function(table) {})
-        Given(/^a pending step$/, function() { return 'pending' })
-      })
+      Given(/^a table:$/, function(table) {})
+      Given(/^a pending step$/, function() { return 'pending' })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then the output contains the text:
       """
       Warnings:
 
       1) Scenario: some scenario # features/a.feature:3
-         ✔ Given a table: # features/step_definitions/cucumber_steps.js:4
+         ✔ Given a table: # features/step_definitions/cucumber_steps.js:3
              | foo\nbar               | bar | baz      |
              | foo\nbar\n\nbaz\n\\boo | bar | baz\nfoo |
-         ? And a pending step # features/step_definitions/cucumber_steps.js:5
+         ? And a pending step # features/step_definitions/cucumber_steps.js:4
              Pending
       """
     And it fails

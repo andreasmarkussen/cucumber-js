@@ -1,10 +1,12 @@
+import { beforeEach, describe, it } from 'mocha'
+import { expect } from 'chai'
 import { getUsage } from './'
 import EventEmitter from 'events'
 import Gherkin from 'gherkin'
 import EventDataCollector from '../event_data_collector'
 
-describe('Usage Helpers', function() {
-  describe('getUsage', function() {
+describe('Usage Helpers', () => {
+  describe('getUsage', () => {
     beforeEach(function() {
       this.eventBroadcaster = new EventEmitter()
       this.eventDataCollector = new EventDataCollector(this.eventBroadcaster)
@@ -12,12 +14,12 @@ describe('Usage Helpers', function() {
       this.getResult = () =>
         getUsage({
           eventDataCollector: this.eventDataCollector,
-          stepDefinitions: this.stepDefinitions
+          stepDefinitions: this.stepDefinitions,
         })
     })
 
-    describe('no step definitions', function() {
-      describe('without steps', function() {
+    describe('no step definitions', () => {
+      describe('without steps', () => {
         beforeEach(function() {
           this.eventBroadcaster.emit('test-run-finished')
         })
@@ -27,7 +29,7 @@ describe('Usage Helpers', function() {
         })
       })
 
-      describe('with a step', function() {
+      describe('with a step', () => {
         beforeEach(function() {
           const events = Gherkin.generateEvents(
             'Feature: a\nScenario: b\nWhen abc\nThen ab',
@@ -39,7 +41,7 @@ describe('Usage Helpers', function() {
               this.eventBroadcaster.emit('pickle-accepted', {
                 type: 'pickle-accepted',
                 pickle: event.pickle,
-                uri: event.uri
+                uri: event.uri,
               })
             }
           })
@@ -48,18 +50,18 @@ describe('Usage Helpers', function() {
             ...testCase,
             steps: [
               { sourceLocation: { uri: 'a.feature', line: 3 } },
-              { sourceLocation: { uri: 'a.feature', line: 4 } }
-            ]
+              { sourceLocation: { uri: 'a.feature', line: 4 } },
+            ],
           })
           this.eventBroadcaster.emit('test-step-finished', {
             index: 0,
             testCase,
-            result: {}
+            result: {},
           })
           this.eventBroadcaster.emit('test-step-finished', {
             index: 1,
             testCase,
-            result: {}
+            result: {},
           })
           this.eventBroadcaster.emit('test-run-finished')
         })

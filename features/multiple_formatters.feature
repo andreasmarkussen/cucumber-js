@@ -9,15 +9,13 @@ Feature: Multiple Formatters
       """
     And a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a passing step$/, function() {})
-      })
+      Given(/^a passing step$/, function() {})
       """
 
   Scenario: Ability to specify multiple formatters
-    When I run cucumber.js with `-f progress -f summary:summary.txt`
+    When I run cucumber-js with `-f progress -f summary:summary.txt`
     Then it outputs the text:
       """
       .

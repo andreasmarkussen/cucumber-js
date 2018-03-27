@@ -3,35 +3,33 @@ Feature: Step definition timeouts
   Background:
     Given a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given, setDefaultTimeout} from 'cucumber'
       import Promise from 'bluebird'
 
-      defineSupportCode(({Given, setDefaultTimeout}) => {
-        setDefaultTimeout(500)
+      setDefaultTimeout(500)
 
-        Given(/^a callback step runs slowly$/, function(callback) {
-          setTimeout(callback, 1000)
-        })
+      Given(/^a callback step runs slowly$/, function(callback) {
+        setTimeout(callback, 1000)
+      })
 
-        Given(/^a callback step runs slowly with an increased timeout$/, {timeout: 1500}, function(callback) {
-          setTimeout(callback, 1000)
-        })
+      Given(/^a callback step runs slowly with an increased timeout$/, {timeout: 1500}, function(callback) {
+        setTimeout(callback, 1000)
+      })
 
-        Given(/^a callback step with a disabled timeout$/, {timeout: -1}, function(callback) {
-          setTimeout(callback, 1000)
-        })
+      Given(/^a callback step with a disabled timeout$/, {timeout: -1}, function(callback) {
+        setTimeout(callback, 1000)
+      })
 
-        Given(/^a promise step runs slowly$/, function() {
-          return Promise.resolve().delay(1000)
-        })
+      Given(/^a promise step runs slowly$/, function() {
+        return Promise.resolve().delay(1000)
+      })
 
-        Given(/^a promise step runs slowly with an increased timeout$/, {timeout: 1500}, function() {
-          return Promise.resolve().delay(1000)
-        })
+      Given(/^a promise step runs slowly with an increased timeout$/, {timeout: 1500}, function() {
+        return Promise.resolve().delay(1000)
+      })
 
-        Given(/^a promise step with a disabled timeout$/, {timeout: -1}, function() {
-          return Promise.resolve().delay(1000)
-        })
+      Given(/^a promise step with a disabled timeout$/, {timeout: -1}, function() {
+        return Promise.resolve().delay(1000)
       })
       """
 
@@ -42,17 +40,17 @@ Feature: Step definition timeouts
         Scenario:
           When a <TYPE> step runs slowly
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it fails
     And the output contains the text:
       """
-      function timed out after 500 milliseconds
+      function timed out, ensure the <TYPE> <ASSERT> within 500 milliseconds
       """
 
     Examples:
-      | TYPE     |
-      | callback |
-      | promise  |
+      | TYPE     | ASSERT      |
+      | callback | is executed |
+      | promise  | resolves    |
 
 
   Scenario Outline: slow steps can increase their timeout
@@ -62,7 +60,7 @@ Feature: Step definition timeouts
         Scenario:
           When a <TYPE> step runs slowly with an increased timeout
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes
 
     Examples:
@@ -79,17 +77,17 @@ Feature: Step definition timeouts
           When a <TYPE> step runs slowly with an increased timeout
           And a <TYPE> step runs slowly
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it fails
     And the output contains the text:
       """
-      function timed out after 500 milliseconds
+      function timed out, ensure the <TYPE> <ASSERT> within 500 milliseconds
       """
 
     Examples:
-      | TYPE     |
-      | callback |
-      | promise  |
+      | TYPE     | ASSERT      |
+      | callback | is executed |
+      | promise  | resolves    |
 
 
   Scenario Outline: steps can disable timeouts
@@ -99,7 +97,7 @@ Feature: Step definition timeouts
         Scenario:
           When a <TYPE> step with a disabled timeout
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes
 
     Examples:

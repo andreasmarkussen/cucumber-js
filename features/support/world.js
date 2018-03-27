@@ -1,4 +1,4 @@
-import { defineSupportCode, Cli } from '../../'
+import { setWorldConstructor, Cli } from '../../'
 import { execFile } from 'child_process'
 import { expect } from 'chai'
 import toString from 'stream-to-string'
@@ -34,7 +34,7 @@ class World {
       const cli = new Cli({
         argv: args,
         cwd,
-        stdout
+        stdout,
       })
       let error, stderr
       try {
@@ -67,13 +67,11 @@ class World {
       error: result.error,
       errorOutput: result.stderr,
       jsonOutput,
-      output: colors.strip(result.stdout)
+      output: colors.strip(result.stdout),
     }
     this.verifiedLastRunError = false
     expect(this.lastRun.output).to.not.include('Unhandled rejection')
   }
 }
 
-defineSupportCode(({ setWorldConstructor }) => {
-  setWorldConstructor(World)
-})
+setWorldConstructor(World)

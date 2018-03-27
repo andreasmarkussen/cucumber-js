@@ -9,15 +9,13 @@ Feature: Formatter Paths
       """
     And a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a passing step$/, function() {})
-      })
+      Given(/^a passing step$/, function() {})
       """
 
   Scenario: Relative path
-    When I run cucumber.js with `-f summary:summary.txt`
+    When I run cucumber-js with `-f summary:summary.txt`
     Then the file "summary.txt" has the text:
       """
       1 scenario (1 passed)
@@ -27,7 +25,7 @@ Feature: Formatter Paths
 
   Scenario: Absolute path
     Given "{{{tmpDir}}}" is an absolute path
-    When I run cucumber.js with `-f summary:{{{tmpDir}}}/summary.txt`
+    When I run cucumber-js with `-f summary:{{{tmpDir}}}/summary.txt`
     Then the file "{{{tmpDir}}}/summary.txt" has the text:
       """
       1 scenario (1 passed)
@@ -36,7 +34,7 @@ Feature: Formatter Paths
       """
 
   Scenario: Invalid path
-    When I run cucumber.js with `-f summary:invalid/summary.txt`
+    When I run cucumber-js with `-f summary:invalid/summary.txt`
     Then it fails
     And the error output contains the text:
       """

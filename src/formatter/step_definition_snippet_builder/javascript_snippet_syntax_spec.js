@@ -1,8 +1,10 @@
+import { beforeEach, describe, it } from 'mocha'
+import { expect } from 'chai'
 import JavascriptSnippetSyntax from './javascript_snippet_syntax'
 
-describe('JavascriptSnippetSyntax', function() {
-  describe('build()', function() {
-    describe('callback interface', function() {
+describe('JavascriptSnippetSyntax', () => {
+  describe('build()', () => {
+    describe('callback interface', () => {
       beforeEach(function() {
         this.syntax = new JavascriptSnippetSyntax('callback')
       })
@@ -14,10 +16,10 @@ describe('JavascriptSnippetSyntax', function() {
           generatedExpressions: [
             {
               source: 'pattern',
-              parameterNames: ['arg1', 'arg2']
-            }
+              parameterNames: ['arg1', 'arg2'],
+            },
           ],
-          stepParameterNames: []
+          stepParameterNames: [],
         })
         const expected =
           "functionName('pattern', function (arg1, arg2, callback) {\n" +
@@ -28,7 +30,7 @@ describe('JavascriptSnippetSyntax', function() {
       })
     })
 
-    describe('generator interface', function() {
+    describe('generator interface', () => {
       beforeEach(function() {
         this.syntax = new JavascriptSnippetSyntax('generator')
       })
@@ -40,10 +42,10 @@ describe('JavascriptSnippetSyntax', function() {
           generatedExpressions: [
             {
               source: 'pattern',
-              parameterNames: ['arg1', 'arg2']
-            }
+              parameterNames: ['arg1', 'arg2'],
+            },
           ],
-          stepParameterNames: []
+          stepParameterNames: [],
         })
         const expected =
           "functionName('pattern', function *(arg1, arg2) {\n" +
@@ -54,7 +56,7 @@ describe('JavascriptSnippetSyntax', function() {
       })
     })
 
-    describe('promise interface', function() {
+    describe('promise interface', () => {
       beforeEach(function() {
         this.syntax = new JavascriptSnippetSyntax('promise')
       })
@@ -66,10 +68,10 @@ describe('JavascriptSnippetSyntax', function() {
           generatedExpressions: [
             {
               source: 'pattern',
-              parameterNames: ['arg1', 'arg2']
-            }
+              parameterNames: ['arg1', 'arg2'],
+            },
           ],
-          stepParameterNames: []
+          stepParameterNames: [],
         })
         const expected =
           "functionName('pattern', function (arg1, arg2) {\n" +
@@ -80,7 +82,7 @@ describe('JavascriptSnippetSyntax', function() {
       })
     })
 
-    describe('synchronous interface', function() {
+    describe('synchronous interface', () => {
       beforeEach(function() {
         this.syntax = new JavascriptSnippetSyntax('synchronous')
       })
@@ -92,10 +94,10 @@ describe('JavascriptSnippetSyntax', function() {
           generatedExpressions: [
             {
               source: 'pattern',
-              parameterNames: ['arg1', 'arg2']
-            }
+              parameterNames: ['arg1', 'arg2'],
+            },
           ],
-          stepParameterNames: []
+          stepParameterNames: [],
         })
         const expected =
           "functionName('pattern', function (arg1, arg2) {\n" +
@@ -106,7 +108,7 @@ describe('JavascriptSnippetSyntax', function() {
       })
     })
 
-    describe('pattern contains single quote', function() {
+    describe('pattern contains single quote', () => {
       beforeEach(function() {
         this.syntax = new JavascriptSnippetSyntax('synchronous')
       })
@@ -118,10 +120,10 @@ describe('JavascriptSnippetSyntax', function() {
           generatedExpressions: [
             {
               source: "pattern'",
-              parameterNames: ['arg1', 'arg2']
-            }
+              parameterNames: ['arg1', 'arg2'],
+            },
           ],
-          stepParameterNames: []
+          stepParameterNames: [],
         })
         const expected =
           "functionName('pattern\\'', function (arg1, arg2) {\n" +
@@ -132,7 +134,7 @@ describe('JavascriptSnippetSyntax', function() {
       })
     })
 
-    describe('multiple patterns', function() {
+    describe('multiple patterns', () => {
       beforeEach(function() {
         this.syntax = new JavascriptSnippetSyntax('synchronous')
       })
@@ -144,18 +146,18 @@ describe('JavascriptSnippetSyntax', function() {
           generatedExpressions: [
             {
               parameterNames: ['argA', 'argB'],
-              source: 'pattern1'
+              source: 'pattern1',
             },
             {
               parameterNames: ['argC', 'argD'],
-              source: 'pattern2'
+              source: 'pattern2',
             },
             {
               parameterNames: ['argE', 'argF'],
-              source: 'pattern3'
-            }
+              source: 'pattern3',
+            },
           ],
-          stepParameterNames: []
+          stepParameterNames: [],
         })
         const expected =
           "functionName('pattern1', function (argA, argB) {\n" +

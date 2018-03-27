@@ -7,7 +7,7 @@ import ProfileLoader from './profile_loader'
 import Promise from 'bluebird'
 
 export async function getExpandedArgv({ argv, cwd }) {
-  let { options } = ArgvParser.parse(argv)
+  const { options } = ArgvParser.parse(argv)
   let fullArgv = argv
   const profileArgv = await new ProfileLoader(cwd).getArgv(options.profile)
   if (profileArgv.length > 0) {
@@ -21,7 +21,7 @@ export async function getTestCasesFromFilesystem({
   eventBroadcaster,
   featureDefaultLanguage,
   featurePaths,
-  pickleFilter
+  pickleFilter,
 }) {
   let result = []
   await Promise.each(featurePaths, async featurePath => {
@@ -32,7 +32,7 @@ export async function getTestCasesFromFilesystem({
         language: featureDefaultLanguage,
         source,
         pickleFilter,
-        uri: path.relative(cwd, featurePath)
+        uri: path.relative(cwd, featurePath),
       })
     )
   })
@@ -44,7 +44,7 @@ export async function getTestCases({
   language,
   pickleFilter,
   source,
-  uri
+  uri,
 }) {
   const result = []
   const events = Gherkin.generateEvents(source, uri, {}, language)

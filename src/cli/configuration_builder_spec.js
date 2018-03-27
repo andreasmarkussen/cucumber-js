@@ -1,3 +1,5 @@
+import { beforeEach, describe, it } from 'mocha'
+import { expect } from 'chai'
 import { promisify } from 'bluebird'
 import ConfigurationBuilder from './configuration_builder'
 import fsExtra from 'fs-extra'
@@ -6,18 +8,18 @@ import tmp from 'tmp'
 
 const outputFile = promisify(fsExtra.outputFile)
 
-describe('Configuration', function() {
+describe('Configuration', () => {
   beforeEach(async function() {
     this.tmpDir = await promisify(tmp.dir)({ unsafeCleanup: true })
     await promisify(fsExtra.mkdirp)(path.join(this.tmpDir, 'features'))
     this.argv = ['path/to/node', 'path/to/cucumber.js']
     this.configurationOptions = {
       argv: this.argv,
-      cwd: this.tmpDir
+      cwd: this.tmpDir,
     }
   })
 
-  describe('no argv', function() {
+  describe('no argv', () => {
     beforeEach(async function() {
       this.result = await ConfigurationBuilder.build(this.configurationOptions)
     })
@@ -28,15 +30,16 @@ describe('Configuration', function() {
         featurePaths: [],
         formatOptions: {
           colorsEnabled: true,
-          cwd: this.tmpDir
+          cwd: this.tmpDir,
         },
         formats: [{ outputTo: '', type: 'progress' }],
         listI18nKeywordsFor: '',
         listI18nLanguages: false,
+        parallel: 0,
         pickleFilterOptions: {
-          featurePaths: ['features'],
+          featurePaths: ['features/**/*.feature'],
           names: [],
-          tagExpression: ''
+          tagExpression: '',
         },
         profiles: [],
         runtimeOptions: {
@@ -44,15 +47,16 @@ describe('Configuration', function() {
           failFast: false,
           filterStacktraces: true,
           strict: true,
-          worldParameters: {}
+          worldParameters: {},
         },
         shouldExitImmediately: false,
-        supportCodePaths: []
+        supportCodePaths: [],
+        supportCodeRequiredModules: [],
       })
     })
   })
 
-  describe('path to a feature', function() {
+  describe('path to a feature', () => {
     beforeEach(async function() {
       this.relativeFeaturePath = path.join('features', 'a.feature')
       this.featurePath = path.join(this.tmpDir, this.relativeFeaturePath)
@@ -67,17 +71,17 @@ describe('Configuration', function() {
       const {
         featurePaths,
         pickleFilterOptions,
-        supportCodePaths
+        supportCodePaths,
       } = this.result
       expect(featurePaths).to.eql([this.featurePath])
       expect(pickleFilterOptions.featurePaths).to.eql([
-        this.relativeFeaturePath
+        this.relativeFeaturePath,
       ])
       expect(supportCodePaths).to.eql([this.supportCodePath])
     })
   })
 
-  describe('path to a nested feature', function() {
+  describe('path to a nested feature', () => {
     beforeEach(async function() {
       this.relativeFeaturePath = path.join('features', 'nested', 'a.feature')
       this.featurePath = path.join(this.tmpDir, this.relativeFeaturePath)
@@ -92,17 +96,17 @@ describe('Configuration', function() {
       const {
         featurePaths,
         pickleFilterOptions,
-        supportCodePaths
+        supportCodePaths,
       } = this.result
       expect(featurePaths).to.eql([this.featurePath])
       expect(pickleFilterOptions.featurePaths).to.eql([
-        this.relativeFeaturePath
+        this.relativeFeaturePath,
       ])
       expect(supportCodePaths).to.eql([this.supportCodePath])
     })
   })
 
-  describe('formatters', function() {
+  describe('formatters', () => {
     it('adds a default', async function() {
       const formats = await getFormats(this.configurationOptions)
       expect(formats).to.eql([{ outputTo: '', type: 'progress' }])
@@ -114,7 +118,7 @@ describe('Configuration', function() {
 
       expect(formats).to.eql([
         { outputTo: '', type: 'progress' },
-        { outputTo: '../formatter/output.txt', type: '../custom/formatter' }
+        { outputTo: '../formatter/output.txt', type: '../custom/formatter' },
       ])
     })
 
@@ -124,7 +128,7 @@ describe('Configuration', function() {
 
       expect(formats).to.eql([
         { outputTo: '', type: 'progress' },
-        { outputTo: '/formatter/output.txt', type: '/custom/formatter' }
+        { outputTo: '/formatter/output.txt', type: '/custom/formatter' },
       ])
     })
 
@@ -134,7 +138,10 @@ describe('Configuration', function() {
 
       expect(formats).to.eql([
         { outputTo: '', type: 'progress' },
-        { outputTo: 'D:\\formatter\\output.txt', type: 'C:\\custom\\formatter' }
+        {
+          outputTo: 'D:\\formatter\\output.txt',
+          type: 'C:\\custom\\formatter',
+        },
       ])
     })
 

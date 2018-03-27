@@ -7,7 +7,7 @@ Feature: Summary Formatter
       """
       Feature: some feature
       """
-    When I run cucumber.js with `-f summary`
+    When I run cucumber-js with `-f summary`
     Then it outputs the text:
       """
       0 scenarios
@@ -25,14 +25,12 @@ Feature: Summary Formatter
       """
     And a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a step$/, function() {})
-        Given(/^another step$/, function() {})
-      })
+      Given(/^a step$/, function() {})
+      Given(/^another step$/, function() {})
       """
-    When I run cucumber.js with `-f summary`
+    When I run cucumber-js with `-f summary`
     Then it outputs the text:
       """
       1 scenario (1 passed)

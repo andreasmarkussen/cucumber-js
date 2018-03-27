@@ -8,7 +8,7 @@ const STATUS_REPORT_ORDER = [
   Status.UNDEFINED,
   Status.PENDING,
   Status.SKIPPED,
-  Status.PASSED
+  Status.PASSED,
 ]
 
 export function formatSummary({ colorFns, testCaseMap, testRun }) {
@@ -25,12 +25,12 @@ export function formatSummary({ colorFns, testCaseMap, testRun }) {
   const scenarioSummary = getCountSummary({
     colorFns,
     objects: testCaseResults,
-    type: 'scenario'
+    type: 'scenario',
   })
   const stepSummary = getCountSummary({
     colorFns,
     objects: testStepResults,
-    type: 'step'
+    type: 'step',
   })
   const durationSummary = getDuration(testRun.result.duration)
   return [scenarioSummary, stepSummary, durationSummary].join('\n')
@@ -42,15 +42,15 @@ function getCountSummary({ colorFns, objects, type }) {
     .mapValues('length')
     .value()
   const total = _.reduce(counts, (memo, value) => memo + value) || 0
-  let text = total + ' ' + type + (total === 1 ? '' : 's')
+  let text = `${total} ${type}${total === 1 ? '' : 's'}`
   if (total > 0) {
     const details = []
     STATUS_REPORT_ORDER.forEach(status => {
       if (counts[status] > 0) {
-        details.push(colorFns[status](counts[status] + ' ' + status))
+        details.push(colorFns[status](`${counts[status]} ${status}`))
       }
     })
-    text += ' (' + details.join(', ') + ')'
+    text += ` (${details.join(', ')})`
   }
   return text
 }
@@ -61,12 +61,8 @@ function getDuration(milliseconds) {
   const duration = new Duration(start, end)
 
   return (
-    duration.minutes +
-    'm' +
-    duration.toString('%S') +
-    '.' +
-    duration.toString('%L') +
-    's' +
-    '\n'
+    `${duration.minutes}m${duration.toString('%S')}.${duration.toString(
+      '%L'
+    )}s` + `\n`
   )
 }

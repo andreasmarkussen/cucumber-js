@@ -18,7 +18,7 @@ export default class FormatterBuilder {
     const extendedOptions = {
       colorFns: getColorFns(options.colorsEnabled),
       snippetBuilder: FormatterBuilder.getStepDefinitionSnippetBuilder(options),
-      ...options
+      ...options,
     }
     return new Formatter(extendedOptions)
   }
@@ -52,10 +52,10 @@ export default class FormatterBuilder {
     cwd,
     snippetInterface,
     snippetSyntax,
-    supportCodeLibrary
+    supportCodeLibrary,
   }) {
     if (!snippetInterface) {
-      snippetInterface = 'callback'
+      snippetInterface = 'synchronous'
     }
     let Syntax = JavascriptSnippetSyntax
     if (snippetSyntax) {
@@ -64,7 +64,7 @@ export default class FormatterBuilder {
     }
     return new StepDefinitionSnippetBuilder({
       snippetSyntax: new Syntax(snippetInterface),
-      parameterTypeRegistry: supportCodeLibrary.parameterTypeRegistry
+      parameterTypeRegistry: supportCodeLibrary.parameterTypeRegistry,
     })
   }
 
@@ -78,10 +78,9 @@ export default class FormatterBuilder {
       typeof CustomFormatter.default === 'function'
     ) {
       return CustomFormatter.default
-    } else {
-      throw new Error(
-        `Custom formatter (${customFormatterPath}) does not export a function`
-      )
     }
+    throw new Error(
+      `Custom formatter (${customFormatterPath}) does not export a function`
+    )
   }
 }

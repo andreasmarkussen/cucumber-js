@@ -16,7 +16,7 @@ const CHARACTERS = {
   [Status.PASSED]: figures.tick,
   [Status.PENDING]: '?',
   [Status.SKIPPED]: '-',
-  [Status.UNDEFINED]: '?'
+  [Status.UNDEFINED]: '?',
 }
 
 const IS_ISSUE = {
@@ -25,15 +25,15 @@ const IS_ISSUE = {
   [Status.PASSED]: false,
   [Status.PENDING]: true,
   [Status.SKIPPED]: false,
-  [Status.UNDEFINED]: true
+  [Status.UNDEFINED]: true,
 }
 
 function formatDataTable(arg) {
-  const rows = arg.rows.map(row => {
-    return row.cells.map(cell => {
-      return cell.value.replace(/\\/g, '\\\\').replace(/\n/g, '\\n')
-    })
-  })
+  const rows = arg.rows.map(row =>
+    row.cells.map(cell =>
+      cell.value.replace(/\\/g, '\\\\').replace(/\n/g, '\\n')
+    )
+  )
   const table = new Table({
     chars: {
       bottom: '',
@@ -50,20 +50,20 @@ function formatDataTable(arg) {
       top: '',
       'top-left': '',
       'top-mid': '',
-      'top-right': ''
+      'top-right': '',
     },
     style: {
       border: [],
       'padding-left': 1,
-      'padding-right': 1
-    }
+      'padding-right': 1,
+    },
   })
-  table.push.apply(table, rows)
+  table.push(...rows)
   return table.toString()
 }
 
 function formatDocString(arg) {
-  return '"""\n' + arg.content + '\n"""'
+  return `"""\n${arg.content}\n"""`
 }
 
 function formatStep({
@@ -73,7 +73,7 @@ function formatStep({
   keywordType,
   pickleStep,
   snippetBuilder,
-  testStep
+  testStep,
 }) {
   const { status } = testStep.result
   const colorFn = colorFns[status]
@@ -85,11 +85,11 @@ function formatStep({
     identifier = isBeforeHook ? 'Before' : 'After'
   }
 
-  let text = colorFn(CHARACTERS[status] + ' ' + identifier)
+  let text = colorFn(`${CHARACTERS[status]} ${identifier}`)
 
   const { actionLocation } = testStep
   if (actionLocation) {
-    text += ' # ' + colorFns.location(formatLocation(actionLocation))
+    text += ` # ${colorFns.location(formatLocation(actionLocation))}`
   }
   text += '\n'
 
@@ -97,22 +97,30 @@ function formatStep({
     let str
     const iterator = buildStepArgumentIterator({
       dataTable: arg => (str = formatDataTable(arg)),
-      docString: arg => (str = formatDocString(arg))
+      docString: arg => (str = formatDocString(arg)),
     })
     _.each(pickleStep.arguments, iterator)
     if (str) {
-      text += indentString(colorFn(str) + '\n', 4)
+      text += indentString(`${colorFn(str)}\n`, 4)
     }
   }
+
+  if (testStep.attachments) {
+    testStep.attachments.forEach(({ media, data }) => {
+      const message = media.type === 'text/plain' ? `: ${data}` : ''
+      text += indentString(`Attachment (${media.type})${message}\n`, 4)
+    })
+  }
+
   const message = getStepMessage({
     colorFns,
     keywordType,
     pickleStep,
     snippetBuilder,
-    testStep
+    testStep,
   })
   if (message) {
-    text += indentString(message, 4) + '\n'
+    text += `${indentString(message, 4)}\n`
   }
   return text
 }
@@ -127,17 +135,12 @@ export function formatIssue({
   number,
   pickle,
   snippetBuilder,
-  testCase
+  testCase,
 }) {
-  const prefix = number + ') '
+  const prefix = `${number}) `
   let text = prefix
   const scenarioLocation = formatLocation(testCase.sourceLocation)
-  text +=
-    'Scenario: ' +
-    pickle.name +
-    ' # ' +
-    colorFns.location(scenarioLocation) +
-    '\n'
+  text += `Scenario: ${pickle.name} # ${colorFns.location(scenarioLocation)}\n`
   const stepLineToKeywordMap = getStepLineToKeywordMap(gherkinDocument)
   const stepLineToPickledStepMap = getStepLineToPickledStepMap(pickle)
   let isBeforeHook = true
@@ -151,7 +154,7 @@ export function formatIssue({
       keywordType = getStepKeywordType({
         keyword,
         language: gherkinDocument.feature.language,
-        previousKeywordType
+        previousKeywordType,
       })
     }
     const formattedStep = formatStep({
@@ -161,10 +164,10 @@ export function formatIssue({
       keywordType,
       pickleStep,
       snippetBuilder,
-      testStep
+      testStep,
     })
     text += indentString(formattedStep, prefix.length)
     previousKeywordType = keywordType
   })
-  return text + '\n'
+  return `${text}\n`
 }

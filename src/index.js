@@ -8,7 +8,7 @@ export { default as PickleFilter } from './pickle_filter'
 export { default as Runtime } from './runtime'
 export { default as Status } from './status'
 export {
-  default as supportCodeLibraryBuilder
+  default as supportCodeLibraryBuilder,
 } from './support_code_library_builder'
 
 // Formatters
@@ -33,8 +33,6 @@ export const defineParameterType = methods.defineParameterType
 export const defineStep = methods.defineStep
 export const defineSupportCode = methods.defineSupportCode
 export const Given = methods.Given
-export const registerHandler = methods.registerHandler
-export const registerListener = methods.registerListener
 export const setDefaultTimeout = methods.setDefaultTimeout
 export const setDefinitionFunctionWrapper = methods.setDefinitionFunctionWrapper
 export const setWorldConstructor = methods.setWorldConstructor

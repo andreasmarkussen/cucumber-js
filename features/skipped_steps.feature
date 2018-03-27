@@ -17,15 +17,13 @@ Feature: Skipped steps
   Scenario: Synchronous skipped step
     Given a file named "features/step_definitions/skipped_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a skipped step$/, function() {
-          return 'skipped'
-        })
+      Given(/^a skipped step$/, function() {
+        return 'skipped'
       })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes
     And the step "a skipped step" has status "skipped"
 
@@ -33,58 +31,50 @@ Feature: Skipped steps
   Scenario: Callback skipped step
     Given a file named "features/step_definitions/skipped_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a skipped step$/, function(callback) {
-          callback(null, 'skipped')
-        })
+      Given(/^a skipped step$/, function(callback) {
+        callback(null, 'skipped')
       })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes
     And the step "a skipped step" has status "skipped"
 
   Scenario: Promise skipped step
     Given a file named "features/step_definitions/skipped_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a skipped step$/, function(){
-          return {
-            then: function(onResolve, onReject) {
-              setTimeout(function() {
-                onResolve('skipped')
-              })
-            }
+      Given(/^a skipped step$/, function(){
+        return {
+          then: function(onResolve, onReject) {
+            setTimeout(function() {
+              onResolve('skipped')
+            })
           }
-        })
+        }
       })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes
     And the step "a skipped step" has status "skipped"
 
   Scenario: Hook skipped scenario steps
     Given a file named "features/support/hooks.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {After, Before} from 'cucumber'
 
-      defineSupportCode(({After, Before}) => {
-        Before(function() {return 'skipped'})
-      })
+      Before(function() {return 'skipped'})
       """
     And a file named "features/step_definitions/skipped_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a skipped step$/, function() {
-          var a = 1;
-        })
+      Given(/^a skipped step$/, function() {
+        var a = 1;
       })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes
     And the step "a skipped step" has status "skipped"

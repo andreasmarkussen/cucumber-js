@@ -11,20 +11,18 @@ Feature: Data Tables
       """
     Given a file named "features/step_definitions/passing_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
       import assert from 'assert'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a table step$/, function(table) {
-          const expected = [
-            ['Cucumber', 'Cucumis sativus'],
-            ['Burr Gherkin', 'Cucumis anguria']
-          ]
-          assert.deepEqual(table.raw(), expected)
-        })
+      Given(/^a table step$/, function(table) {
+        const expected = [
+          ['Cucumber', 'Cucumis sativus'],
+          ['Burr Gherkin', 'Cucumis anguria']
+        ]
+        assert.deepEqual(table.raw(), expected)
       })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes
 
   Scenario: rows
@@ -40,21 +38,19 @@ Feature: Data Tables
       """
     Given a file named "features/step_definitions/passing_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
       import assert from 'assert'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a table step$/, function(table) {
-          const expected = [
-            ['Apricot', '5'],
-            ['Brocolli', '2'],
-            ['Cucumber', '10']
-          ]
-          assert.deepEqual(table.rows(), expected)
-        })
+      Given(/^a table step$/, function(table) {
+        const expected = [
+          ['Apricot', '5'],
+          ['Brocolli', '2'],
+          ['Cucumber', '10']
+        ]
+        assert.deepEqual(table.rows(), expected)
       })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes
 
   Scenario: rowsHash
@@ -68,20 +64,18 @@ Feature: Data Tables
       """
     Given a file named "features/step_definitions/passing_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
       import assert from 'assert'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a table step$/, function(table) {
-          const expected = {
-            'Cucumber': 'Cucumis sativus',
-            'Burr Gherkin': 'Cucumis anguria'
-          }
-          assert.deepEqual(table.rowsHash(), expected)
-        })
+      Given(/^a table step$/, function(table) {
+        const expected = {
+          'Cucumber': 'Cucumis sativus',
+          'Burr Gherkin': 'Cucumis anguria'
+        }
+        assert.deepEqual(table.rowsHash(), expected)
       })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes
 
   Scenario: hashes
@@ -97,19 +91,17 @@ Feature: Data Tables
       """
     Given a file named "features/step_definitions/passing_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
       import assert from 'assert'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a table step$/, function(table) {
-          const expected = [
-            {'Vegetable': 'Apricot', 'Rating': '5'},
-            {'Vegetable': 'Brocolli', 'Rating': '2'},
-            {'Vegetable': 'Cucumber', 'Rating': '10'}
-          ]
-          assert.deepEqual(table.hashes(), expected)
-        })
+      Given(/^a table step$/, function(table) {
+        const expected = [
+          {'Vegetable': 'Apricot', 'Rating': '5'},
+          {'Vegetable': 'Brocolli', 'Rating': '2'},
+          {'Vegetable': 'Cucumber', 'Rating': '10'}
+        ]
+        assert.deepEqual(table.hashes(), expected)
       })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes

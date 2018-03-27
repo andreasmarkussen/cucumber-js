@@ -3,25 +3,23 @@ Feature: Step definition timeouts
   Background:
     Given a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Before, Given, setDefaultTimeout} from 'cucumber'
 
-      defineSupportCode(({Before, Given, setDefaultTimeout}) => {
-        setDefaultTimeout(500);
+      setDefaultTimeout(500);
 
-        Before({tags: '@slow-with-increased-timeout', timeout: 1500}, function(scenario, callback) {
-          setTimeout(callback, 1000)
-        })
-
-        Before({tags: '@slow'}, function(scenario, callback) {
-          setTimeout(callback, 1000)
-        })
-
-        Before({tags: '@disabled', timeout: -1}, function(scenario, callback) {
-          setTimeout(callback, 1000)
-        })
-
-        Given(/^a passing step$/, function() {})
+      Before({tags: '@slow-with-increased-timeout', timeout: 1500}, function(scenario, callback) {
+        setTimeout(callback, 1000)
       })
+
+      Before({tags: '@slow'}, function(scenario, callback) {
+        setTimeout(callback, 1000)
+      })
+
+      Before({tags: '@disabled', timeout: -1}, function(scenario, callback) {
+        setTimeout(callback, 1000)
+      })
+
+      Given(/^a passing step$/, function() {})
       """
 
   Scenario: slow hooks timeout
@@ -32,11 +30,11 @@ Feature: Step definition timeouts
         Scenario:
           Given a passing step
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it fails
     And the output contains the text:
       """
-      function timed out after 500 milliseconds
+      function timed out, ensure the callback is executed within 500 milliseconds
       """
 
 
@@ -48,7 +46,7 @@ Feature: Step definition timeouts
         Scenario:
           Given a passing step
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes
 
 
@@ -61,11 +59,11 @@ Feature: Step definition timeouts
         Scenario:
           Given a passing step
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it fails
     And the output contains the text:
       """
-      function timed out after 500 milliseconds
+      function timed out, ensure the callback is executed within 500 milliseconds
       """
 
 
@@ -77,5 +75,5 @@ Feature: Step definition timeouts
         Scenario:
           Given a passing step
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes

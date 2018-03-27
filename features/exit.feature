@@ -13,11 +13,9 @@ Feature: Exit
       """
     Given a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode, After} from 'cucumber'
+      import {Given, After} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given('a step', function() {})
-      })
+      Given('a step', function() {})
 
       After(() => {
         setTimeout(() => {
@@ -27,14 +25,14 @@ Feature: Exit
       """
 
   Scenario: by default wait for the event loop to drain
-    When I run cucumber.js
+    When I run cucumber-js
     Then the output contains the text:
       """
       external process done
       """
 
   Scenario: exit immediately without waiting for the even loop to drain
-    When I run cucumber.js with `--exit`
+    When I run cucumber-js with `--exit`
     Then the output does not contain the text:
       """
       external process done

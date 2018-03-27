@@ -1,10 +1,12 @@
+import { beforeEach, describe, it } from 'mocha'
+import { expect } from 'chai'
 import UsageJsonFormatter from './usage_json_formatter'
 import EventEmitter from 'events'
 import Gherkin from 'gherkin'
 import { EventDataCollector } from './helpers'
 
-describe('UsageJsonFormatter', function() {
-  describe('handleFeaturesResult', function() {
+describe('UsageJsonFormatter', () => {
+  describe('handleFeaturesResult', () => {
     beforeEach(function() {
       const eventBroadcaster = new EventEmitter()
       this.output = ''
@@ -16,25 +18,25 @@ describe('UsageJsonFormatter', function() {
           {
             line: 1,
             pattern: '/abc/',
-            uri: 'steps.js'
+            uri: 'steps.js',
           },
           {
             line: 2,
             pattern: '/def/',
-            uri: 'steps.js'
+            uri: 'steps.js',
           },
           {
             line: 3,
             pattern: '/ghi/',
-            uri: 'steps.js'
-          }
-        ]
+            uri: 'steps.js',
+          },
+        ],
       }
-      new UsageJsonFormatter({
+      this.usageJsonFormatter = new UsageJsonFormatter({
         eventBroadcaster,
         eventDataCollector: new EventDataCollector(eventBroadcaster),
         log: logFn,
-        supportCodeLibrary
+        supportCodeLibrary,
       })
       const events = Gherkin.generateEvents(
         'Feature: a\nScenario: b\nGiven abc\nWhen def',
@@ -46,7 +48,7 @@ describe('UsageJsonFormatter', function() {
           eventBroadcaster.emit('pickle-accepted', {
             type: 'pickle-accepted',
             pickle: event.pickle,
-            uri: event.uri
+            uri: event.uri,
           })
         }
       })
@@ -56,23 +58,23 @@ describe('UsageJsonFormatter', function() {
         steps: [
           {
             sourceLocation: { uri: 'a.feature', line: 3 },
-            actionLocation: { uri: 'steps.js', line: 1 }
+            actionLocation: { uri: 'steps.js', line: 1 },
           },
           {
             sourceLocation: { uri: 'a.feature', line: 4 },
-            actionLocation: { uri: 'steps.js', line: 2 }
-          }
-        ]
+            actionLocation: { uri: 'steps.js', line: 2 },
+          },
+        ],
       })
       eventBroadcaster.emit('test-step-finished', {
         index: 0,
         testCase,
-        result: { duration: 1 }
+        result: { duration: 1 },
       })
       eventBroadcaster.emit('test-step-finished', {
         index: 1,
         testCase,
-        result: { duration: 2 }
+        result: { duration: 2 },
       })
       eventBroadcaster.emit('test-run-finished')
     })
@@ -87,12 +89,12 @@ describe('UsageJsonFormatter', function() {
               duration: 2,
               line: 4,
               text: 'def',
-              uri: 'a.feature'
-            }
+              uri: 'a.feature',
+            },
           ],
           meanDuration: 2,
           pattern: '/def/',
-          uri: 'steps.js'
+          uri: 'steps.js',
         },
         {
           line: 1,
@@ -101,19 +103,19 @@ describe('UsageJsonFormatter', function() {
               duration: 1,
               line: 3,
               text: 'abc',
-              uri: 'a.feature'
-            }
+              uri: 'a.feature',
+            },
           ],
           meanDuration: 1,
           pattern: '/abc/',
-          uri: 'steps.js'
+          uri: 'steps.js',
         },
         {
           line: 3,
           matches: [],
           pattern: '/ghi/',
-          uri: 'steps.js'
-        }
+          uri: 'steps.js',
+        },
       ])
     })
   })

@@ -1,21 +1,23 @@
+import { describe, it } from 'mocha'
+import { expect } from 'chai'
 import Status, { getStatusMapping } from './status'
 
-describe('Status', function() {
-  describe('constants', function() {
-    it('exposes the proper constants', function() {
+describe('Status', () => {
+  describe('constants', () => {
+    it('exposes the proper constants', () => {
       expect(Status).to.include.keys([
         'AMBIGUOUS',
         'FAILED',
         'PASSED',
         'PENDING',
         'SKIPPED',
-        'UNDEFINED'
+        'UNDEFINED',
       ])
     })
   })
 
-  describe('getStatusMapping', function() {
-    it('returns a mapping of the statuses with the given initial value', function() {
+  describe('getStatusMapping', () => {
+    it('returns a mapping of the statuses with the given initial value', () => {
       const result = getStatusMapping(0)
       expect(result).to.eql({
         [Status.AMBIGUOUS]: 0,
@@ -23,7 +25,7 @@ describe('Status', function() {
         [Status.PASSED]: 0,
         [Status.PENDING]: 0,
         [Status.SKIPPED]: 0,
-        [Status.UNDEFINED]: 0
+        [Status.UNDEFINED]: 0,
       })
     })
   })

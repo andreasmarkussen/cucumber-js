@@ -13,7 +13,7 @@ Feature: World Parameters
 
   @spawn
   Scenario: Invalid JSON
-    When I run cucumber.js with `--world-parameters '{"a":}'`
+    When I run cucumber-js with `--world-parameters '{"a":}'`
     Then it fails
     And the error output contains the text:
       """
@@ -26,7 +26,7 @@ Feature: World Parameters
 
   @spawn
   Scenario: Non-object
-    When I run cucumber.js with `--world-parameters '[1,2]'`
+    When I run cucumber-js with `--world-parameters '[1,2]'`
     Then it fails
     And the error output contains the text:
       """
@@ -37,52 +37,46 @@ Feature: World Parameters
     Given a file named "features/step_definitions/my_steps.js" with:
       """
       import assert from 'assert'
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^the world parameters are correct$/, function() {
-          assert.deepEqual(this.parameters, {})
-        })
+      Given(/^the world parameters are correct$/, function() {
+        assert.deepEqual(this.parameters, {})
       })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then the step "the world parameters are correct" has status "passed"
 
   Scenario: default world constructor saves the parameters
     Given a file named "features/step_definitions/my_steps.js" with:
       """
       import assert from 'assert'
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^the world parameters are correct$/, function() {
-          assert.equal(this.parameters.a, 1)
-        })
+      Given(/^the world parameters are correct$/, function() {
+        assert.equal(this.parameters.a, 1)
       })
       """
-    When I run cucumber.js with `--world-parameters '{"a":1}'`
+    When I run cucumber-js with `--world-parameters '{"a":1}'`
     Then the step "the world parameters are correct" has status "passed"
 
   Scenario: multiple world parameters are merged with the last taking precedence
     Given a file named "features/step_definitions/my_steps.js" with:
       """
       import assert from 'assert'
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^the world parameters are correct$/, function() {
-          assert.equal(this.parameters.a, 3)
-          assert.equal(this.parameters.b, 2)
-        })
+      Given(/^the world parameters are correct$/, function() {
+        assert.equal(this.parameters.a, 3)
+        assert.equal(this.parameters.b, 2)
       })
       """
-    When I run cucumber.js with `--world-parameters '{"a":1,"b":2}' --world-parameters '{"a":3}'`
+    When I run cucumber-js with `--world-parameters '{"a":1,"b":2}' --world-parameters '{"a":3}'`
     Then the step "the world parameters are correct" has status "passed"
 
   Scenario: custom world constructor is passed the parameters
     Given a file named "features/support/world.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {setWorldConstructor} from 'cucumber'
 
       function CustomWorld(options) {
         for(const key in options.parameters) {
@@ -90,20 +84,16 @@ Feature: World Parameters
         }
       }
 
-      defineSupportCode(({setWorldConstructor}) => {
-        setWorldConstructor(CustomWorld)
-      })
+      setWorldConstructor(CustomWorld)
       """
     Given a file named "features/step_definitions/my_steps.js" with:
       """
       import assert from 'assert'
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^the world parameters are correct$/, function() {
-          assert.equal(this.a, 1)
-        })
+      Given(/^the world parameters are correct$/, function() {
+        assert.equal(this.a, 1)
       })
       """
-    When I run cucumber.js with `--world-parameters '{"a":1}'`
+    When I run cucumber-js with `--world-parameters '{"a":1}'`
     Then the step "the world parameters are correct" has status "passed"

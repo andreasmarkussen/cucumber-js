@@ -16,20 +16,18 @@ Feature: Rerun Formatter
       """
     And a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a passing step$/, function() {})
-        Given(/^a failing step$/, function() { throw 'fail' })
-      })
+      Given(/^a passing step$/, function() {})
+      Given(/^a failing step$/, function() { throw 'fail' })
       """
     And a directory named "test_results"
-    When I run cucumber.js with `--format rerun:test_results/@rerun.txt`
+    When I run cucumber-js with `--format rerun:test_results/@rerun.txt`
     Then it fails
     And the file "test_results/@rerun.txt" has the text:
       """
       features/a.feature:5
       """
-    When I run cucumber.js with `test_results/@rerun.txt`
+    When I run cucumber-js with `test_results/@rerun.txt`
     Then it fails
     And it runs the scenario "2"

@@ -1,10 +1,12 @@
+import { beforeEach, describe, it } from 'mocha'
+import { expect } from 'chai'
 import UsageFormatter from './usage_formatter'
 import EventEmitter from 'events'
 import Gherkin from 'gherkin'
 import { EventDataCollector } from './helpers'
 
-describe('UsageFormatter', function() {
-  describe('handleFeaturesResult', function() {
+describe('UsageFormatter', () => {
+  describe('handleFeaturesResult', () => {
     beforeEach(function() {
       this.eventBroadcaster = new EventEmitter()
       this.output = ''
@@ -12,17 +14,17 @@ describe('UsageFormatter', function() {
         this.output += data
       }
       this.supportCodeLibrary = {
-        stepDefinitions: []
+        stepDefinitions: [],
       }
-      new UsageFormatter({
+      this.usageFormatter = new UsageFormatter({
         eventBroadcaster: this.eventBroadcaster,
         eventDataCollector: new EventDataCollector(this.eventBroadcaster),
         log: logFn,
-        supportCodeLibrary: this.supportCodeLibrary
+        supportCodeLibrary: this.supportCodeLibrary,
       })
     })
 
-    describe('no step definitions', function() {
+    describe('no step definitions', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-run-finished')
       })
@@ -32,17 +34,17 @@ describe('UsageFormatter', function() {
       })
     })
 
-    describe('with one step definition', function() {
+    describe('with one step definition', () => {
       beforeEach(function() {
         this.stepDefinition = {
           line: 1,
           pattern: '/^abc?$/',
-          uri: 'steps.js'
+          uri: 'steps.js',
         }
         this.supportCodeLibrary.stepDefinitions = [this.stepDefinition]
       })
 
-      describe('unused', function() {
+      describe('unused', () => {
         beforeEach(function() {
           this.eventBroadcaster.emit('test-run-finished')
         })
@@ -58,7 +60,7 @@ describe('UsageFormatter', function() {
         })
       })
 
-      describe('used', function() {
+      describe('used', () => {
         beforeEach(function() {
           const events = Gherkin.generateEvents(
             'Feature: a\nScenario: b\nWhen abc\nThen ab',
@@ -70,7 +72,7 @@ describe('UsageFormatter', function() {
               this.eventBroadcaster.emit('pickle-accepted', {
                 type: 'pickle-accepted',
                 pickle: event.pickle,
-                uri: event.uri
+                uri: event.uri,
               })
             }
           })
@@ -80,27 +82,27 @@ describe('UsageFormatter', function() {
             steps: [
               {
                 sourceLocation: { uri: 'a.feature', line: 3 },
-                actionLocation: { uri: 'steps.js', line: 1 }
+                actionLocation: { uri: 'steps.js', line: 1 },
               },
               {
                 sourceLocation: { uri: 'a.feature', line: 4 },
-                actionLocation: { uri: 'steps.js', line: 1 }
-              }
-            ]
+                actionLocation: { uri: 'steps.js', line: 1 },
+              },
+            ],
           })
         })
 
-        describe('in dry run', function() {
+        describe('in dry run', () => {
           beforeEach(function() {
             this.eventBroadcaster.emit('test-step-finished', {
               index: 0,
               testCase: this.testCase,
-              result: {}
+              result: {},
             })
             this.eventBroadcaster.emit('test-step-finished', {
               index: 1,
               testCase: this.testCase,
-              result: {}
+              result: {},
             })
             this.eventBroadcaster.emit('test-run-finished')
           })
@@ -118,17 +120,17 @@ describe('UsageFormatter', function() {
           })
         })
 
-        describe('not in dry run', function() {
+        describe('not in dry run', () => {
           beforeEach(function() {
             this.eventBroadcaster.emit('test-step-finished', {
               index: 0,
               testCase: this.testCase,
-              result: { duration: 1 }
+              result: { duration: 1 },
             })
             this.eventBroadcaster.emit('test-step-finished', {
               index: 1,
               testCase: this.testCase,
-              result: { duration: 0 }
+              result: { duration: 0 },
             })
             this.eventBroadcaster.emit('test-run-finished')
           })
@@ -148,24 +150,24 @@ describe('UsageFormatter', function() {
       })
     })
 
-    describe('with multiple definition', function() {
+    describe('with multiple definition', () => {
       beforeEach(function() {
         this.supportCodeLibrary.stepDefinitions = [
           {
             line: 1,
             pattern: '/abc/',
-            uri: 'steps.js'
+            uri: 'steps.js',
           },
           {
             line: 2,
             pattern: '/def/',
-            uri: 'steps.js'
+            uri: 'steps.js',
           },
           {
             line: 3,
             pattern: '/ghi/',
-            uri: 'steps.js'
-          }
+            uri: 'steps.js',
+          },
         ]
         const events = Gherkin.generateEvents(
           'Feature: a\nScenario: b\nGiven abc\nWhen def',
@@ -177,7 +179,7 @@ describe('UsageFormatter', function() {
             this.eventBroadcaster.emit('pickle-accepted', {
               type: 'pickle-accepted',
               pickle: event.pickle,
-              uri: event.uri
+              uri: event.uri,
             })
           }
         })
@@ -187,23 +189,23 @@ describe('UsageFormatter', function() {
           steps: [
             {
               sourceLocation: { uri: 'a.feature', line: 3 },
-              actionLocation: { uri: 'steps.js', line: 1 }
+              actionLocation: { uri: 'steps.js', line: 1 },
             },
             {
               sourceLocation: { uri: 'a.feature', line: 4 },
-              actionLocation: { uri: 'steps.js', line: 2 }
-            }
-          ]
+              actionLocation: { uri: 'steps.js', line: 2 },
+            },
+          ],
         })
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
           testCase,
-          result: { duration: 1 }
+          result: { duration: 1 },
         })
         this.eventBroadcaster.emit('test-step-finished', {
           index: 1,
           testCase,
-          result: { duration: 2 }
+          result: { duration: 2 },
         })
         this.eventBroadcaster.emit('test-run-finished')
       })

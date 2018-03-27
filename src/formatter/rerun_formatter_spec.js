@@ -1,3 +1,5 @@
+import { beforeEach, describe, it } from 'mocha'
+import { expect } from 'chai'
 import _ from 'lodash'
 import path from 'path'
 import RerunFormatter from './rerun_formatter'
@@ -15,14 +17,14 @@ function prepareFormatter(options = {}) {
   this.rerunFormatter = new RerunFormatter({
     ...options,
     eventBroadcaster: this.eventBroadcaster,
-    log: logFn
+    log: logFn,
   })
 }
 
-describe('RerunFormatter', function() {
+describe('RerunFormatter', () => {
   beforeEach(prepareFormatter)
 
-  describe('with no scenarios', function() {
+  describe('with no scenarios', () => {
     beforeEach(function() {
       this.eventBroadcaster.emit('test-run-finished')
     })
@@ -33,11 +35,11 @@ describe('RerunFormatter', function() {
   })
 
   _.each([Status.PASSED], status => {
-    describe('with one ' + status + ' scenario', function() {
+    describe(`with one ${status} scenario`, () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-case-finished', {
           sourceLocation: { uri: this.feature1Path, line: 1 },
-          result: { status }
+          result: { status },
         })
         this.eventBroadcaster.emit('test-run-finished')
       })
@@ -54,14 +56,14 @@ describe('RerunFormatter', function() {
       Status.FAILED,
       Status.PENDING,
       Status.SKIPPED,
-      Status.UNDEFINED
+      Status.UNDEFINED,
     ],
     status => {
-      describe('with one ' + status + ' scenario', function() {
+      describe(`with one ${status} scenario`, () => {
         beforeEach(function() {
           this.eventBroadcaster.emit('test-case-finished', {
             sourceLocation: { uri: this.feature1Path, line: 1 },
-            result: { status }
+            result: { status },
           })
           this.eventBroadcaster.emit('test-run-finished')
         })
@@ -73,15 +75,15 @@ describe('RerunFormatter', function() {
     }
   )
 
-  describe('with two failing scenarios in the same file', function() {
+  describe('with two failing scenarios in the same file', () => {
     beforeEach(function() {
       this.eventBroadcaster.emit('test-case-finished', {
         sourceLocation: { uri: this.feature1Path, line: 1 },
-        result: { status: Status.FAILED }
+        result: { status: Status.FAILED },
       })
       this.eventBroadcaster.emit('test-case-finished', {
         sourceLocation: { uri: this.feature1Path, line: 2 },
-        result: { status: Status.FAILED }
+        result: { status: Status.FAILED },
       })
       this.eventBroadcaster.emit('test-run-finished')
     })
@@ -95,32 +97,31 @@ describe('RerunFormatter', function() {
     [
       { separator: { opt: undefined, expected: '\n' }, label: 'default' },
       { separator: { opt: '\n', expected: '\n' }, label: 'newline' },
-      { separator: { opt: ' ', expected: ' ' }, label: 'space' }
+      { separator: { opt: ' ', expected: ' ' }, label: 'space' },
     ],
     ({ separator, label }) => {
-      describe('using ' + label + ' separator', function() {
-        describe('with two failing scenarios in different files', function() {
+      describe(`using ${label} separator`, () => {
+        describe('with two failing scenarios in different files', () => {
           beforeEach(function() {
             prepareFormatter.apply(this, [
-              { rerun: { separator: separator.opt } }
+              { rerun: { separator: separator.opt } },
             ])
 
             this.eventBroadcaster.emit('test-case-finished', {
               sourceLocation: { uri: this.feature1Path, line: 1 },
-              result: { status: Status.FAILED }
+              result: { status: Status.FAILED },
             })
             this.eventBroadcaster.emit('test-case-finished', {
               sourceLocation: { uri: this.feature2Path, line: 2 },
-              result: { status: Status.FAILED }
+              result: { status: Status.FAILED },
             })
             this.eventBroadcaster.emit('test-run-finished')
           })
 
           it('outputs the references needed to run the scenarios again', function() {
             expect(this.output).to.eql(
-              `${this.feature1Path}:1` +
-                separator.expected +
-                `${this.feature2Path}:2`
+              `${this.feature1Path}:1${separator.expected}${this
+                .feature2Path}:2`
             )
           })
         })

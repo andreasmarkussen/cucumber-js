@@ -9,24 +9,20 @@ Feature: Environment Hooks
       """
     And a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a step$/, function() {})
-      })
+      Given(/^a step$/, function() {})
       """
 
   Scenario: Hooks are steps
     Given a file named "features/support/hooks.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {After, Before} from 'cucumber'
 
-      defineSupportCode(({After, Before}) => {
-        Before(function() {})
-        After(function() {})
-      })
+      Before(function() {})
+      After(function() {})
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then the scenario "some scenario" has the steps
       | IDENTIFIER   |
       | Before       |
@@ -36,47 +32,41 @@ Feature: Environment Hooks
   Scenario: Failing before fails the scenario
     Given a file named "features/support/hooks.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Before} from 'cucumber'
 
-      defineSupportCode(({Before}) => {
-        Before(function() { throw 'Fail' })
-      })
+      Before(function() { throw 'Fail' })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it fails
 
   @spawn
   Scenario: Failing after hook fails the scenario
     Given a file named "features/support/hooks.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {After} from 'cucumber'
 
-      defineSupportCode(({After}) => {
-        After(function() { throw 'Fail' })
-      })
+      After(function() { throw 'Fail' })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it fails
 
   @spawn
   Scenario: After hooks still execute after a failure
     Given a file named "features/support/hooks.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {After, Before} from 'cucumber'
 
-      defineSupportCode(({After, Before}) => {
-        Before(function() { throw 'Fail' })
-        After(function() {})
-      })
+      Before(function() { throw 'Fail' })
+      After(function() {})
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it fails
     And the "After" hook has status "passed"
 
   Scenario: World is this in hooks
     Given a file named "features/support/world.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {setWorldConstructor} from 'cucumber'
 
       function WorldConstructor() {
         return {
@@ -84,27 +74,23 @@ Feature: Environment Hooks
         }
       }
 
-      defineSupportCode(({setWorldConstructor}) => {
-        setWorldConstructor(WorldConstructor)
-      })
+      setWorldConstructor(WorldConstructor)
       """
     Given a file named "features/support/hooks.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {After, Before} from 'cucumber'
 
-      defineSupportCode(({After, Before}) => {
-        Before(function() {
-          if (!this.isWorld()) {
-            throw Error("Expected this to be world")
-          }
-        })
+      Before(function() {
+        if (!this.isWorld()) {
+          throw Error("Expected this to be world")
+        }
+      })
 
-        After(function() {
-          if (!this.isWorld()) {
-            throw Error("Expected this to be world")
-          }
-        })
+      After(function() {
+        if (!this.isWorld()) {
+          throw Error("Expected this to be world")
+        }
       })
       """
-    When I run cucumber.js
+    When I run cucumber-js
     Then it passes

@@ -1,10 +1,12 @@
+import { beforeEach, describe, it } from 'mocha'
+import { expect } from 'chai'
 import getColorFns from './get_color_fns'
 import ProgressFormatter from './progress_formatter'
 import Status from '../status'
 import { EventEmitter } from 'events'
 import { EventDataCollector } from './helpers'
 
-describe('ProgressFormatter', function() {
+describe('ProgressFormatter', () => {
   beforeEach(function() {
     this.eventBroadcaster = new EventEmitter()
     this.output = ''
@@ -16,25 +18,25 @@ describe('ProgressFormatter', function() {
       colorFns,
       eventBroadcaster: this.eventBroadcaster,
       eventDataCollector: new EventDataCollector(this.eventBroadcaster),
-      log: logFn
+      log: logFn,
     })
   })
 
-  describe('test step finished', function() {
+  describe('test step finished', () => {
     beforeEach(function() {
       this.testCase = { sourceLocation: { uri: 'path/to/feature', line: 1 } }
       this.eventBroadcaster.emit('test-case-prepared', {
         sourceLocation: this.testCase.sourceLocation,
-        steps: [{}]
+        steps: [{}],
       })
     })
 
-    describe('ambiguous', function() {
+    describe('ambiguous', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
           result: { status: Status.AMBIGUOUS },
-          testCase: this.testCase
+          testCase: this.testCase,
         })
       })
 
@@ -43,12 +45,12 @@ describe('ProgressFormatter', function() {
       })
     })
 
-    describe('failed', function() {
+    describe('failed', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
           result: { status: Status.FAILED },
-          testCase: this.testCase
+          testCase: this.testCase,
         })
       })
 
@@ -57,12 +59,12 @@ describe('ProgressFormatter', function() {
       })
     })
 
-    describe('passed', function() {
+    describe('passed', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
           result: { status: Status.PASSED },
-          testCase: this.testCase
+          testCase: this.testCase,
         })
       })
 
@@ -71,12 +73,12 @@ describe('ProgressFormatter', function() {
       })
     })
 
-    describe('pending', function() {
+    describe('pending', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
           result: { status: Status.PENDING },
-          testCase: this.testCase
+          testCase: this.testCase,
         })
       })
 
@@ -85,12 +87,12 @@ describe('ProgressFormatter', function() {
       })
     })
 
-    describe('skipped', function() {
+    describe('skipped', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
           result: { status: Status.SKIPPED },
-          testCase: this.testCase
+          testCase: this.testCase,
         })
       })
 
@@ -99,12 +101,12 @@ describe('ProgressFormatter', function() {
       })
     })
 
-    describe('undefined', function() {
+    describe('undefined', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
           result: { status: Status.UNDEFINED },
-          testCase: this.testCase
+          testCase: this.testCase,
         })
       })
 
@@ -114,10 +116,10 @@ describe('ProgressFormatter', function() {
     })
   })
 
-  describe('test run finished', function() {
+  describe('test run finished', () => {
     beforeEach(function() {
       this.eventBroadcaster.emit('test-run-finished', {
-        result: { duration: 0 }
+        result: { duration: 0 },
       })
     })
 

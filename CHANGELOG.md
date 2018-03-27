@@ -1,12 +1,58 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-### [Unreleased](https://github.com/cucumber/cucumber-js/compare/v3.2.1...master) (In Git)
+### [Unreleased](https://github.com/cucumber/cucumber-js/compare/v4.1.0...master) (In Git)
+
+### [4.1.0](https://github.com/cucumber/cucumber-js/compare/v4.0.0...v4.1.0) (2018-03-27)
+
+#### New Features
+
+* update step timeout error message for each interface ([#1028](https://github.com/cucumber/cucumber-js/pull/1028), Bruce Lindsay)
+* default to synchronous snippets
+* print text step attachments ([#1041](https://github.com/cucumber/cucumber-js/pull/1041), DevSide)
+
+#### Bug Fixes
+
+* cucumber-expressions: Upgrade from 5.0.7 to [5.0.13](https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/CHANGELOG.md#5013---2018-01-21)
+* fix error serialization in parallel mode
+
+### [4.0.0](https://github.com/cucumber/cucumber-js/compare/v3.2.1...v4.0.0) (2018-01-24)
 
 #### BREAKING CHANGES
 
 * cucumber now waits for the event loop to drain before exiting. To exit immediately when the tests finish running use `--exit`. Use of this flag is discouraged. See [here](/docs/cli.md#exiting) for more information
+* remove `--compiler` option. See [here](/docs/cli.md#transpilers) for the new way to use transpilers
+* remove binaries `cucumber.js` and `cucumberjs`. Use `cucumber-js`
 
-### [3.2.1](https://github.com/cucumber/cucumber-js/compare/v3.2.0...v3.2.1) (2017-01-03)
+#### New Features
+
+* can now use glob patterns for selecting what features to run
+* update `--require` to support glob patterns
+* add `--require-module <NODE_MODULE>` to require node modules before support code is loaded
+* add snippet interface "async-await"
+* add `--parallel <NUMBER_OF_SLAVES>` option to run tests in parallel. Note this is an experimental feature. See [here](/docs/cli.md#parallel-experimental) for more information
+
+#### Bug Fixes
+
+* revert json formatter duration to nanoseconds
+
+#### Deprecations
+
+* `defineSupportCode` is deprecated. Require/import the individual methods instead
+  ```js
+  var {defineSupportCode} = require('cucumber');
+
+  defineSupportCode(function({Given}) {
+    Given(/^a step$/, function() {});
+  });
+
+  // Should be updated to
+
+  var {Given} = require('cucumber');
+
+  Given(/^a step$/, function() {});
+  ```
+
+### [3.2.1](https://github.com/cucumber/cucumber-js/compare/v3.2.0...v3.2.1) (2018-01-03)
 
 #### Bug Fixes
 * revert json formatter mime type ([#995](https://github.com/cucumber/cucumber-js/pull/995)

@@ -28,32 +28,30 @@ Feature: Target specific scenarios
       """
     And a file named "features/step_definitions/cucumber_steps.js" with:
       """
-      import {defineSupportCode} from 'cucumber'
+      import {Given} from 'cucumber'
 
-      defineSupportCode(({Given}) => {
-        Given(/^a step is (.*)$/, function() {})
-      })
+      Given(/^a step is (.*)$/, function() {})
       """
 
   Scenario: run a single scenario
-    When I run cucumber.js with `--tags @a`
+    When I run cucumber-js with `--tags @a`
     Then it fails
     And it runs the scenario "first scenario"
 
   Scenario: filter out scenarios with ~
-    When I run cucumber.js with `--tags "not @b"`
+    When I run cucumber-js with `--tags "not @b"`
     Then it fails
     And it runs the scenario "first scenario"
 
   Scenario: merge multiple tag expressions
-    When I run cucumber.js with `--tags @b --tags "not @c"`
+    When I run cucumber-js with `--tags @b --tags "not @c"`
     Then it fails
     And it runs the scenarios:
       | NAME |
       | second scenario - Z |
 
   Scenario: run a single scenario outline
-    When I run cucumber.js with `--tags @b`
+    When I run cucumber-js with `--tags @b`
     Then it fails
     And it runs the scenarios:
       | NAME |
@@ -62,7 +60,7 @@ Feature: Target specific scenarios
       | second scenario - Z |
 
   Scenario: run a single scenario outline examples
-    When I run cucumber.js with `--tags @c`
+    When I run cucumber-js with `--tags @c`
     Then it fails
     And it runs the scenarios:
       | NAME |

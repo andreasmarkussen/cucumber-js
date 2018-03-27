@@ -7,13 +7,13 @@ import { format } from 'assertion-error-formatter'
 
 const {
   getStepLineToKeywordMap,
-  getScenarioLineToDescriptionMap
+  getScenarioLineToDescriptionMap,
 } = GherkinDocumentParser
 
 const {
   getScenarioDescription,
   getStepLineToPickledStepMap,
-  getStepKeyword
+  getStepKeyword,
 } = PickleParser
 
 export default class JsonFormatter extends Formatter {
@@ -28,23 +28,21 @@ export default class JsonFormatter extends Formatter {
 
   formatDataTable(dataTable) {
     return {
-      rows: dataTable.rows.map(row => {
-        return { cells: _.map(row.cells, 'value') }
-      })
+      rows: dataTable.rows.map(row => ({ cells: _.map(row.cells, 'value') })),
     }
   }
 
   formatDocString(docString) {
     return {
       content: docString.content,
-      line: docString.location.line
+      line: docString.location.line,
     }
   }
 
   formatStepArguments(stepArguments) {
     const iterator = buildStepArgumentIterator({
       dataTable: this.formatDataTable.bind(this),
-      docString: this.formatDocString.bind(this)
+      docString: this.formatDocString.bind(this),
     })
     return _.map(stepArguments, iterator)
   }
@@ -72,7 +70,7 @@ export default class JsonFormatter extends Formatter {
         const scenarioData = this.getScenarioData({
           featureId: featureData.id,
           pickle,
-          scenarioLineToDescriptionMap
+          scenarioLineToDescriptionMap,
         })
         const stepLineToPickledStepMap = getStepLineToPickledStepMap(pickle)
         let isBeforeHook = true
@@ -82,7 +80,7 @@ export default class JsonFormatter extends Formatter {
             isBeforeHook,
             stepLineToKeywordMap,
             stepLineToPickledStepMap,
-            testStep
+            testStep,
           })
         })
         return scenarioData
@@ -100,23 +98,23 @@ export default class JsonFormatter extends Formatter {
       line: feature.location.line,
       id: this.convertNameToId(feature),
       tags: this.getTags(feature),
-      uri
+      uri,
     }
   }
 
   getScenarioData({ featureId, pickle, scenarioLineToDescriptionMap }) {
     const description = getScenarioDescription({
       pickle,
-      scenarioLineToDescriptionMap
+      scenarioLineToDescriptionMap,
     })
     return {
       description,
-      id: featureId + ';' + this.convertNameToId(pickle),
+      id: `${featureId};${this.convertNameToId(pickle)}`,
       keyword: 'Scenario',
       line: pickle.locations[0].line,
       name: pickle.name,
       tags: this.getTags(pickle),
-      type: 'scenario'
+      type: 'scenario',
     }
   }
 
@@ -124,7 +122,7 @@ export default class JsonFormatter extends Formatter {
     isBeforeHook,
     stepLineToKeywordMap,
     stepLineToPickledStepMap,
-    testStep
+    testStep,
   }) {
     const data = {}
     if (testStep.sourceLocation) {
@@ -145,26 +143,25 @@ export default class JsonFormatter extends Formatter {
       const { result: { exception, status } } = testStep
       data.result = { status }
       if (testStep.result.duration) {
-        data.result.duration = testStep.result.duration
+        data.result.duration = testStep.result.duration * 1000000
       }
       if (status === Status.FAILED && exception) {
         data.result.error_message = format(exception)
       }
     }
     if (_.size(testStep.attachments) > 0) {
-      data.embeddings = testStep.attachments.map(attachment => {
-        return {
-          data: attachment.data,
-          mime_type: attachment.media.type
-        }
-      })
+      data.embeddings = testStep.attachments.map(attachment => ({
+        data: attachment.data,
+        mime_type: attachment.media.type,
+      }))
     }
     return data
   }
 
   getTags(obj) {
-    return _.map(obj.tags, tagData => {
-      return { name: tagData.name, line: tagData.location.line }
-    })
+    return _.map(obj.tags, tagData => ({
+      name: tagData.name,
+      line: tagData.location.line,
+    }))
   }
 }

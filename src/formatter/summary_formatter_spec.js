@@ -1,3 +1,6 @@
+import { beforeEach, describe, it } from 'mocha'
+import { expect } from 'chai'
+import { createMock } from './test_helpers'
 import getColorFns from './get_color_fns'
 import Status from '../status'
 import SummaryFormatter from './summary_formatter'
@@ -6,7 +9,7 @@ import { EventEmitter } from 'events'
 import Gherkin from 'gherkin'
 import { EventDataCollector } from './helpers'
 
-describe('SummaryFormatter', function() {
+describe('SummaryFormatter', () => {
   beforeEach(function() {
     this.output = ''
     const logFn = data => {
@@ -18,11 +21,11 @@ describe('SummaryFormatter', function() {
       eventBroadcaster: this.eventBroadcaster,
       eventDataCollector: new EventDataCollector(this.eventBroadcaster),
       log: logFn,
-      snippetBuilder: createMock({ build: 'snippet' })
+      snippetBuilder: createMock({ build: 'snippet' }),
     })
   })
 
-  describe('issues', function() {
+  describe('issues', () => {
     beforeEach(function() {
       const events = Gherkin.generateEvents(
         'Feature: a\nScenario: b\nGiven a step',
@@ -34,35 +37,35 @@ describe('SummaryFormatter', function() {
           this.eventBroadcaster.emit('pickle-accepted', {
             type: 'pickle-accepted',
             pickle: event.pickle,
-            uri: event.uri
+            uri: event.uri,
           })
         }
       })
       this.testCase = { sourceLocation: { uri: 'a.feature', line: 2 } }
     })
 
-    describe('with a failing scenario', function() {
+    describe('with a failing scenario', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-case-prepared', {
           sourceLocation: this.testCase.sourceLocation,
           steps: [
             {
               sourceLocation: { uri: 'a.feature', line: 3 },
-              actionLocation: { uri: 'steps.js', line: 4 }
-            }
-          ]
+              actionLocation: { uri: 'steps.js', line: 4 },
+            },
+          ],
         })
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
           testCase: this.testCase,
-          result: { exception: 'error', status: Status.FAILED }
+          result: { exception: 'error', status: Status.FAILED },
         })
         this.eventBroadcaster.emit('test-case-finished', {
           sourceLocation: this.testCase.sourceLocation,
-          result: { status: Status.FAILED }
+          result: { status: Status.FAILED },
         })
         this.eventBroadcaster.emit('test-run-finished', {
-          result: { duration: 0 }
+          result: { duration: 0 },
         })
       })
 
@@ -81,15 +84,15 @@ describe('SummaryFormatter', function() {
       })
     })
 
-    describe('with an ambiguous step', function() {
+    describe('with an ambiguous step', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-case-prepared', {
           sourceLocation: this.testCase.sourceLocation,
           steps: [
             {
-              sourceLocation: { uri: 'a.feature', line: 3 }
-            }
-          ]
+              sourceLocation: { uri: 'a.feature', line: 3 },
+            },
+          ],
         })
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
@@ -99,15 +102,15 @@ describe('SummaryFormatter', function() {
               'Multiple step definitions match:\n' +
               '  pattern1        - steps.js:3\n' +
               '  longer pattern2 - steps.js:4',
-            status: Status.AMBIGUOUS
-          }
+            status: Status.AMBIGUOUS,
+          },
         })
         this.eventBroadcaster.emit('test-case-finished', {
           sourceLocation: this.testCase.sourceLocation,
-          result: { status: Status.AMBIGUOUS }
+          result: { status: Status.AMBIGUOUS },
         })
         this.eventBroadcaster.emit('test-run-finished', {
-          result: { duration: 0 }
+          result: { duration: 0 },
         })
       })
 
@@ -128,27 +131,27 @@ describe('SummaryFormatter', function() {
       })
     })
 
-    describe('with an undefined step', function() {
+    describe('with an undefined step', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-case-prepared', {
           sourceLocation: this.testCase.sourceLocation,
           steps: [
             {
-              sourceLocation: { uri: 'a.feature', line: 3 }
-            }
-          ]
+              sourceLocation: { uri: 'a.feature', line: 3 },
+            },
+          ],
         })
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
           testCase: this.testCase,
-          result: { status: Status.UNDEFINED }
+          result: { status: Status.UNDEFINED },
         })
         this.eventBroadcaster.emit('test-case-finished', {
           sourceLocation: this.testCase.sourceLocation,
-          result: { status: Status.UNDEFINED }
+          result: { status: Status.UNDEFINED },
         })
         this.eventBroadcaster.emit('test-run-finished', {
-          result: { duration: 0 }
+          result: { duration: 0 },
         })
       })
 
@@ -170,28 +173,28 @@ describe('SummaryFormatter', function() {
       })
     })
 
-    describe('with a pending step', function() {
+    describe('with a pending step', () => {
       beforeEach(function() {
         this.eventBroadcaster.emit('test-case-prepared', {
           sourceLocation: this.testCase.sourceLocation,
           steps: [
             {
               sourceLocation: { uri: 'a.feature', line: 3 },
-              actionLocation: { uri: 'steps.js', line: 4 }
-            }
-          ]
+              actionLocation: { uri: 'steps.js', line: 4 },
+            },
+          ],
         })
         this.eventBroadcaster.emit('test-step-finished', {
           index: 0,
           testCase: this.testCase,
-          result: { status: Status.PENDING }
+          result: { status: Status.PENDING },
         })
         this.eventBroadcaster.emit('test-case-finished', {
           sourceLocation: this.testCase.sourceLocation,
-          result: { status: Status.PENDING }
+          result: { status: Status.PENDING },
         })
         this.eventBroadcaster.emit('test-run-finished', {
-          result: { duration: 0 }
+          result: { duration: 0 },
         })
       })
 
@@ -210,11 +213,11 @@ describe('SummaryFormatter', function() {
       })
     })
 
-    describe('summary', function() {
-      describe('with a duration of 123 milliseconds', function() {
+    describe('summary', () => {
+      describe('with a duration of 123 milliseconds', () => {
         beforeEach(function() {
           this.eventBroadcaster.emit('test-run-finished', {
-            result: { duration: 123 }
+            result: { duration: 123 },
           })
         })
 
@@ -223,10 +226,10 @@ describe('SummaryFormatter', function() {
         })
       })
 
-      describe('with a duration of 12.3 seconds', function() {
+      describe('with a duration of 12.3 seconds', () => {
         beforeEach(function() {
           this.eventBroadcaster.emit('test-run-finished', {
-            result: { duration: 123 * 100 }
+            result: { duration: 123 * 100 },
           })
         })
 
@@ -235,10 +238,10 @@ describe('SummaryFormatter', function() {
         })
       })
 
-      describe('with a duration of 120.3 seconds', function() {
+      describe('with a duration of 120.3 seconds', () => {
         beforeEach(function() {
           this.eventBroadcaster.emit('test-run-finished', {
-            result: { duration: 123 * 1000 }
+            result: { duration: 123 * 1000 },
           })
         })
 
